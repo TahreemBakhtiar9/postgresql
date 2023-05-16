@@ -16,7 +16,7 @@ import com.rem.gmdb.repos.MovieRepo;
 @RequestMapping("/movies")
 public class MovieCon {
     @Autowired
-    private MovieRepo movieRepo;
+    private  MovieRepo movieRepo;
 
     @PostMapping("/post")
     public void addMovie(@RequestBody Movie movie){
@@ -29,8 +29,5 @@ public class MovieCon {
 
     }
 
-    public Object findAll() {
-        return null;
-    }
 
 }

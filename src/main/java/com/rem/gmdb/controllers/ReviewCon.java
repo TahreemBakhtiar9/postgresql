@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.service.annotation.PutExchange;
 
 import com.rem.gmdb.models.Review;
 import com.rem.gmdb.repos.ReviewRepo;
@@ -33,12 +34,11 @@ public class ReviewCon {
         }
     
     @DeleteMapping("/{id}")
-        public void delete(@PathVariable int id){
-            reviewRepo.deleteById(id);
-        }
+    public void delete(@PathVariable int id){
+        reviewRepo.deleteById(id);
+    }
         
-    
-    @UpdateMapping("/{id}")
+    @PutExchange("/{id}")
     public void updateReview(@RequestBody Review review){
         reviewRepo.update(review);
     }

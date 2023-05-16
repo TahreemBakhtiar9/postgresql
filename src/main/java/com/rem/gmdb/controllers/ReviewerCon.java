@@ -7,13 +7,15 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.rem.gmdb.models.Reviewer;
 import com.rem.gmdb.repos.ReviewerRepo;
 
-@RESTControllers
+@RestController
 @RequestMapping("/reviewer")
 
 public class ReviewerCon {
@@ -35,9 +37,7 @@ private ReviewerRepo reviewerRepo;
         public void delete(@PathVariable int id){
             reviewerRepo.deleteById(id);
         }
-        
-    
-    @UpdateMapping("/{id}")
+    @PutMapping("/{id}")
     public void updateReview(@RequestBody Reviewer reviewer){
         reviewerRepo.update(reviewer);
     }
