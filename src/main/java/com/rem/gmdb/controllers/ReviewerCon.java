@@ -37,10 +37,10 @@ private ReviewerRepo reviewerRepo;
         public void delete(@PathVariable int id){
             reviewerRepo.deleteById(id);
         }
-    @PutMapping("/{id}")
-    public void updateReview(@RequestBody Reviewer reviewer){
-        reviewerRepo.update(reviewer);
-    }
+    // @PutMapping("/{id}")
+    // public void updateReview(@RequestBody Reviewer reviewer){
+    //     reviewerRepo.update(reviewer);
+    // }
     
     
 }

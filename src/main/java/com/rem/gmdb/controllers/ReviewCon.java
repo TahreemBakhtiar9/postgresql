@@ -38,9 +38,9 @@ public class ReviewCon {
         reviewRepo.deleteById(id);
     }
         
-    @PutExchange("/{id}")
-    public void updateReview(@RequestBody Review review){
-        reviewRepo.update(review);
-    }
+    // @PutExchange("/{id}")
+    // public void updateReview(@RequestBody Review review){
+    //     reviewRepo.update(review);
+    // }
     
 }

@@ -9,6 +9,6 @@ import com.rem.gmdb.models.Reviewer;
 
 public interface ReviewerRepo extends JpaRepository<Reviewer , Integer> {
 
-    void update(Reviewer reviewer);
+
     
 }
