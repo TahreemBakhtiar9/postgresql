@@ -55,7 +55,9 @@ class GmdbApplicationTests {
         mvc = MockMvcBuilders.webAppContextSetup(context).build();
         mvc1=MockMvcBuilders.standaloneSetup(moviesController).build();
     }
-
+	// 1. As a user
+    //    I can GET a list of movies from GMDB that includes Movie ID | Movie Title | Year Released | Genre | Runtime
+    //    so that I can see the list of available movies.
 	@Test
 	public void getallMovies()throws Exception{
 		Movie movie1 = new Movie(1,1010, "Sabih", "lame", "120 mins");
@@ -69,6 +71,12 @@ class GmdbApplicationTests {
 		mvc.perform(get("/movies/all")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
+	}
+
+	@Test
+	public void getByReviewes()throws Exception{
+		
+		
 	}
 	// @Test
 	// public void canGetAllBooks() throws Exception {
