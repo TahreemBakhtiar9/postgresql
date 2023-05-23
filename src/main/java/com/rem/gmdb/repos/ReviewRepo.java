@@ -9,6 +9,7 @@ import com.rem.gmdb.models.Review;
 
 public interface ReviewRepo extends JpaRepository<Review, Integer> {
 
+
     
     
 }

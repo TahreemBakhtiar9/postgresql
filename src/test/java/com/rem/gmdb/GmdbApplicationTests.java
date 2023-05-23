@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import javax.print.attribute.standard.Media;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,44 +27,53 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 import com.rem.gmdb.controllers.MovieCon;
 import com.rem.gmdb.models.Movie;
+import com.rem.gmdb.models.Review;
 import com.rem.gmdb.models.Reviewer;
 import com.rem.gmdb.repos.MovieRepo;
 import com.rem.gmdb.repos.ReviewRepo;
+import com.rem.gmdb.repos.ReviewerRepo;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
 class GmdbApplicationTests {
-	private MockMvc mvc,mvc1;
-    @InjectMocks
-    private MovieCon moviesController;
-    @Mock MovieRepo repo;
-    @Mock ReviewRepo repo1;
-    private JacksonTester<Reviewer> jsonReviewer;
-    private JacksonTester<Movie> jsonmovies;
-    private JacksonTester<ReviewRepo> jsonreview;
-    @Autowired
-    private WebApplicationContext context;
-    // private 
-    @BeforeEach
-    public void setup() {
-        JacksonTester.initFields(this, new ObjectMapper());
-        mvc = MockMvcBuilders.webAppContextSetup(context).build();
-        mvc1=MockMvcBuilders.standaloneSetup(moviesController).build();
-    }
+	private MockMvc mvc, mvc1;
+	@InjectMocks
+	private MovieCon moviesController;
+	@Mock
+	MovieRepo repo;
+	@Mock
+	ReviewRepo repo1;
+	@Mock
+	ReviewerRepo repo2;
+	private JacksonTester<Reviewer> jsonReviewer;
+	private JacksonTester<Movie> jsonmovies;
+	private JacksonTester<ReviewRepo> jsonreview;
+	@Autowired
+	private WebApplicationContext context;
+
+	// private
+	@BeforeEach
+	public void setup() {
+		JacksonTester.initFields(this, new ObjectMapper());
+		mvc = MockMvcBuilders.webAppContextSetup(context).build();
+		// mvc1=MockMvcBuilders.standaloneSetup(moviesController).build();
+	}
+
 	// 1. As a user
-    //    I can GET a list of movies from GMDB that includes Movie ID | Movie Title | Year Released | Genre | Runtime
-    //    so that I can see the list of available movies.
+	// I can GET a list of movies from GMDB that includes Movie ID | Movie Title |
+	// Year Released | Genre | Runtime
+	// so that I can see the list of available movies.
 	@Test
-	public void getallMovies()throws Exception{
-		Movie movie1 = new Movie(1,1010, "Sabih", "lame", "120 mins");
-		Movie movie2 = new Movie(1,1010, "Sabih", "lame", "120 mins");
-		Movie movie3 = new Movie(1,1010, "Sabih", "lame", "120 mins");
+	public void getallMovies() throws Exception {
+		Movie movie1 = new Movie(1, 1010, "Sabih", "lame", "120 mins", null);
+		Movie movie2 = new Movie(1, 1010, "Sabih", "lame", "120 mins", null);
+		Movie movie3 = new Movie(1, 1010, "Sabih", "lame", "120 mins", null);
 		ArrayList<Movie> movies = new ArrayList<>();
 		movies.add(movie1);
 		movies.add(movie2);
@@ -72,25 +83,120 @@ class GmdbApplicationTests {
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
 	}
+	@Test
+	public void addMovies() throws Exception {
+		Movie movie1 = new Movie(1, 1010, "Sabih", "lame", "120 mins", null);
+		Movie movie2 = new Movie(1, 1010, "Sabih", "lame", "120 mins", null);
+		Movie movie3 = new Movie(1, 1010, "Sabih", "lame", "120 mins", null);
+		ArrayList<Movie> movies = new ArrayList<>();
+		movies.add(movie1);
+		movies.add(movie2);
+		movies.add(movie3);
+		
+		mvc.perform(post("/movies")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(jsonmovies.write(movie1).getJson()))
+				.andExpect(status().isOk());
+	}
 
 	@Test
-	public void getByReviewes()throws Exception{
-		
-		
-	}
-	// @Test
-	// public void canGetAllBooks() throws Exception {
-	// 	Book book1 = new Book(1, "HTML for Babies", "Some Kid", 1999, 26);
-	// 	Book book2 = new Book(2, "C# Expert", "Rox", 2006, 260);
-	// 	Collection<Book> books = new ArrayList<Book>();
-	// 	books.add(book1);
-	// 	books.add(book2);
-	// 	when(bookrepository.getAllBook()).thenReturn(books);
-	// 	mvc.perform(get("/books/all")
-	// 			.contentType(MediaType.APPLICATION_JSON))
-	// 			.andExpect(status().isOk())
-	// 			.andExpect(content().json(jsonBooks.write(books).getJson()));
+	public void getByReviews() throws Exception {
 
-	// }
+		// ArrayList<Review> review = new ArrayList<>();
+		// review.add(review1);
+		Movie movie1 = new Movie(1, 1010, "Sabih", "lame", "120mns", null);
+		Review review1 = new Review(01, "Poor performance", "11/11/1880", movie1);
+		when(repo.findById(1)).thenReturn(Optional.of(review1.getMovies()));
+
+		mvc.perform(get("/movies/1")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+
+	}
+
+	@Test
+	public void getReviewer() throws Exception {
+
+		Reviewer reviewer1 = new Reviewer(1, "Tahreem ", 299, "12/09/2012");
+
+		when(repo2.findById(1)).thenReturn(Optional.of(reviewer1));
+		mvc.perform(get("/reviewer/1")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	// 4. As a user
+	// I can register as a reviewer by providing my Username. (Reviewer ID should be
+	// autogenerated)
+	// So that I can start reviewing movies.
+	@Test
+	public void RegisterUser() throws Exception {
+		Reviewer reviewer1 = new Reviewer("Sabih");
+		mvc.perform(MockMvcRequestBuilders.post("/reviewer/post")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(jsonReviewer.write(reviewer1).getJson()))
+				.andExpect(status().isOk());
+	}
+
+	// 5. As a reviewer
+	// I can post a review by providing my reviewer ID, a movie ID and my review
+	// text. (Review ID should be autogenerated)
+	// So that I can share my opinions with others.
+	@Test
+	public void PostReview() throws Exception {
+
+		Review review3 = new Review(1, "Cheap like Sabih", "10/10/2022", null);
+
+		mvc.perform(post("/reviews")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(jsonreview.write(review3).getJson()))
+				.andExpect(status().isOk());
+	}
+
+	// 6. As a reviewer
+	// I can delete a review by providing my reviewer ID and a review ID
+	// So that I can remove reviews I no longer wish to share.
+	@Test
+	public void DeleteReview() throws Exception {
+		mvc.perform(delete("/reviews/1")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	// 7. As a reviewer
+	// I can update a review by providing my reviewer ID, a movie ID and my review
+	// text.
+	// So that I can modify the opinion I'm sharing with others.
+
+	@Test
+	public void UpdateReview() throws Exception {
+		Review review1 = new Review( 1, "Good", "11-2-1998", null);
+
+		mvc.perform(put("/reviews/Update")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(jsonreview.write(review1).getJson()))
+				.andExpect(status().isOk());
+	}
+
+	// 10. As an admin
+	// I can delete a movie by providing a movie ID
+	// so that I can remove movies I no longer wish to shar
+	@Test
+	public void DeleteMovie() throws Exception {
+		mvc.perform(delete("/movies/1")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	public void UpdateMovie() throws Exception{
+		Movie movie3 = new Movie(1, 2020, "How to get away with murder", "Horror", "45 mins", null);
+
+			mvc.perform(put("/movies/update")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(jsonmovies.write(movie3).getJson()))
+				.andExpect(status().isOk());
+
+	}
 
 }

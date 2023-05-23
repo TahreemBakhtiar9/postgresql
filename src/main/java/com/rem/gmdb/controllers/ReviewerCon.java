@@ -23,15 +23,15 @@ public class ReviewerCon {
 @Autowired
 private ReviewerRepo reviewerRepo;
 
-@PostMapping("/postReviewer/{Id}")
-    public void addReview(@RequestBody Reviewer reviewer){
+@PostMapping("/post")
+    public void addReviewer(@RequestBody Reviewer reviewer){
         reviewerRepo.save(reviewer);
     }
 
-    @GetMapping("/Reviewer")
-        public List<Reviewer> getallReviewers(){
-            return reviewerRepo.findAll();
-        }
+    // @GetMapping("all")
+    //     public List<Reviewer> getallReviewers(){
+    //         return reviewerRepo.findAll();
+    //     }
     
     @DeleteMapping("/{id}")
         public void delete(@PathVariable int id){
@@ -41,6 +41,11 @@ private ReviewerRepo reviewerRepo;
     // public void updateReview(@RequestBody Reviewer reviewer){
     //     reviewerRepo.update(reviewer);
     // }
+
+    @GetMapping("/{id}")
+        public Reviewer getbyId(@PathVariable Integer id){
+            return this.reviewerRepo.findById(id).orElse(null);
+        }
     
     
 }
